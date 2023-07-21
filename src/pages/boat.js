@@ -1,16 +1,15 @@
 import MSelect from "./MSelect";
 import { useEffect } from "react";
-
 const Boat = ({ data, deleteConfiguration }) => {
     useEffect(() => {
         const modelViewerTexture1 = document.querySelector(
             "model-viewer#modelViewer"
         );
-
         modelViewerTexture1.addEventListener("load", () => {
             const material = modelViewerTexture1.model.materials;
 
-            console.log(modelViewerTexture1.model);
+            console.log(modelViewerTexture1.model[0]);
+
             const createAndApplyTexture = async (id, channel, event) => {
                 const texture = await modelViewerTexture1.createTexture(event);
                 const index = parseInt(id) - 1;
@@ -55,6 +54,7 @@ const Boat = ({ data, deleteConfiguration }) => {
             shadow-softness="0.81"
             camera-orbit="227.7deg 74.51deg 14.64m"
             field-of-view="20.46deg"
+            modelIsVisible="false"
         >
             <MSelect
                 className="Hotspot"

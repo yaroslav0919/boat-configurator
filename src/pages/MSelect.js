@@ -6,6 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 const MSelect = (props) => {
     const [visible, setVisible] = useState(false);
     const { dir = "row", list, dataid, deleteConfiguration } = props;
+
     const [text, setText] = useState(
         list.length > 0 ? list[0].content : "Disabled"
     );
