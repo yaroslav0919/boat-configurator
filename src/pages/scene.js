@@ -21,7 +21,7 @@ const Scene = ({ state }) => {
             ref={canvasRef}
             camera={{
                 fov: 60,
-                position: [0, 0, 10],
+                position: [-5, 2, -3],
                 near: 1.0,
                 far: 10000,
                 aspect: window.innerWidth / window.innerHeight,
