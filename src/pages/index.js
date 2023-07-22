@@ -150,7 +150,7 @@ export default function View() {
                             <Grid
                                 sx={{
                                     position: "absolute",
-                                    width: "80vw",
+                                    width: "100vw",
                                     height: "100vh",
                                     color: "white",
                                 }}
