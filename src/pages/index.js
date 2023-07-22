@@ -6,11 +6,19 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import backgroundImg from "../assets/background.png";
 
-import initialData from "./initial-data";
 import Scene from "./scene";
+import { modelParts } from "../constants/index";
+import { findModelByID } from "../utils";
 
 export default function View() {
-    const [state, setState] = useState(initialData);
+    const [state, setState] = useState({
+        cushin: modelParts.coushin[0].id,
+        engine: modelParts.engine[0].id,
+        windlass: modelParts.windlass[0].id,
+        zipwake: modelParts.zipwake[0].id,
+    });
+
+    // console.log(findModelByID(state.cushin));
 
     const [currentDragItem, setCurrentDragItem] = useState({
         taskId: "",
@@ -250,6 +258,7 @@ export default function View() {
                                                                 ? 44
                                                                 : 0)
                                                         }px`,
+
                                                         display: "flex",
                                                         flexDirection: "column",
                                                         gap: "10px",
