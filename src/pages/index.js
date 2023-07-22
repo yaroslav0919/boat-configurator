@@ -8,511 +8,519 @@ import backgroundImg from "../assets/background.png";
 
 import Scene from "./scene";
 import { modelParts } from "../constants/index";
-import { findModelByID } from "../utils";
+import { findModelByID, getFirstRemoveArray } from "../utils";
 
 export default function View() {
-    const [state, setState] = useState({
-        cushin: modelParts.coushin[0].id,
+    const [currentItems, setCurrentItems] = useState({
+        coushin: modelParts.coushin[0].id,
         engine: modelParts.engine[0].id,
         windlass: modelParts.windlass[0].id,
         zipwake: modelParts.zipwake[0].id,
     });
 
-    // console.log(findModelByID(state.cushin));
+    const [possibleItems, setPossibleItems] = useState({
+        coushin: [getFirstRemoveArray(modelParts.coushin)],
+        engine: [getFirstRemoveArray(modelParts.engine)],
+        windlass: [getFirstRemoveArray(modelParts.windlass)],
+        zipwake: [getFirstRemoveArray(modelParts.zipwake)],
+    });
+
+    console.log(currentItems, possibleItems);
 
     const [currentDragItem, setCurrentDragItem] = useState({
         taskId: "",
         columnId: "",
     });
 
-    const deleteConfiguration = useCallback(
-        (clickID) => {
-            const updatedColumns = {
-                ...state.columns,
-                "column-1": {
-                    ...state.columns["column-1"],
-                    taskIds: state.columns["column-1"].taskIds.filter(
-                        (taskId) => taskId !== clickID
-                    ),
-                },
-                "column-2": {
-                    ...state.columns["column-2"],
-                    taskIds: [...state.columns["column-2"].taskIds, clickID],
-                },
-            };
+    // const deleteConfiguration = useCallback(
+    //     (clickID) => {
+    //         const updatedColumns = {
+    //             ...state.columns,
+    //             "column-1": {
+    //                 ...state.columns["column-1"],
+    //                 taskIds: state.columns["column-1"].taskIds.filter(
+    //                     (taskId) => taskId !== clickID
+    //                 ),
+    //             },
+    //             "column-2": {
+    //                 ...state.columns["column-2"],
+    //                 taskIds: [...state.columns["column-2"].taskIds, clickID],
+    //             },
+    //         };
 
-            const updatedData = {
-                ...state,
-                columns: updatedColumns,
-            };
-            setState({ ...updatedData });
-        },
-        [state]
-    );
+    //         const updatedData = {
+    //             ...state,
+    //             columns: updatedColumns,
+    //         };
+    //         setState({ ...updatedData });
+    //     },
+    //     [state]
+    // );
 
-    const handleDragStart = useCallback(
-        (start) => {
-            setCurrentDragItem({
-                taskId: start.draggableId,
-                columnId: start.source.droppableId,
-            });
-            setState({
-                ...state,
-                homeIndex: state.columnOrder.indexOf(start.source.droppableId),
-            });
-        },
-        [state]
-    );
+    // const handleDragStart = useCallback(
+    //     (start) => {
+    //         setCurrentDragItem({
+    //             taskId: start.draggableId,
+    //             columnId: start.source.droppableId,
+    //         });
+    //         setState({
+    //             ...state,
+    //             homeIndex: state.columnOrder.indexOf(start.source.droppableId),
+    //         });
+    //     },
+    //     [state]
+    // );
 
-    const handleDragUpdate = useCallback((update) => {}, []);
+    // const handleDragUpdate = useCallback((update) => {}, []);
 
-    const handleDragEnd = useCallback(
-        (result) => {
-            setState({
-                ...state,
-                homeIndex: null,
-            });
+    // const handleDragEnd = useCallback(
+    //     (result) => {
+    //         setState({
+    //             ...state,
+    //             homeIndex: null,
+    //         });
 
-            if (!result.destination) {
-                return;
-            }
+    //         if (!result.destination) {
+    //             return;
+    //         }
 
-            if (
-                result.destination.droppableId === result.source.droppableId &&
-                result.destination.index === result.source.index
-            ) {
-                return;
-            }
-            const start = state.columns[result.source.droppableId];
-            const finish = state.columns[result.destination.droppableId];
+    //         if (
+    //             result.destination.droppableId === result.source.droppableId &&
+    //             result.destination.index === result.source.index
+    //         ) {
+    //             return;
+    //         }
+    //         const start = state.columns[result.source.droppableId];
+    //         const finish = state.columns[result.destination.droppableId];
 
-            if (start === finish) {
-                const newTaskIds = Array.from(start.taskIds);
-                newTaskIds.splice(result.source.index, 1);
-                newTaskIds.splice(
-                    result.destination.index,
-                    0,
-                    result.draggableId
-                );
+    //         if (start === finish) {
+    //             const newTaskIds = Array.from(start.taskIds);
+    //             newTaskIds.splice(result.source.index, 1);
+    //             newTaskIds.splice(
+    //                 result.destination.index,
+    //                 0,
+    //                 result.draggableId
+    //             );
 
-                const newColumn = {
-                    ...start,
-                    taskIds: newTaskIds,
-                };
+    //             const newColumn = {
+    //                 ...start,
+    //                 taskIds: newTaskIds,
+    //             };
 
-                setState({
-                    ...state,
-                    columns: {
-                        ...state.columns,
-                        [newColumn.id]: newColumn,
-                    },
-                });
-                return;
-            }
+    //             setState({
+    //                 ...state,
+    //                 columns: {
+    //                     ...state.columns,
+    //                     [newColumn.id]: newColumn,
+    //                 },
+    //             });
+    //             return;
+    //         }
 
-            const startTaskIds = Array.from(start.taskIds);
-            startTaskIds.splice(result.source.index, 1);
-            const newStart = {
-                ...start,
-                taskIds: startTaskIds,
-            };
+    //         const startTaskIds = Array.from(start.taskIds);
+    //         startTaskIds.splice(result.source.index, 1);
+    //         const newStart = {
+    //             ...start,
+    //             taskIds: startTaskIds,
+    //         };
 
-            const finishTaskIds = Array.from(finish.taskIds);
-            finishTaskIds.splice(
-                result.destination.index,
-                0,
-                result.draggableId
-            );
-            const newFinish = {
-                ...finish,
-                taskIds: finishTaskIds,
-            };
+    //         const finishTaskIds = Array.from(finish.taskIds);
+    //         finishTaskIds.splice(
+    //             result.destination.index,
+    //             0,
+    //             result.draggableId
+    //         );
+    //         const newFinish = {
+    //             ...finish,
+    //             taskIds: finishTaskIds,
+    //         };
 
-            setState({
-                ...state,
-                columns: {
-                    ...state.columns,
-                    [newStart.id]: newStart,
-                    [newFinish.id]: newFinish,
-                },
-            });
-        },
-        [state]
-    );
+    //         setState({
+    //             ...state,
+    //             columns: {
+    //                 ...state.columns,
+    //                 [newStart.id]: newStart,
+    //                 [newFinish.id]: newFinish,
+    //             },
+    //         });
+    //     },
+    //     [state]
+    // );
 
     return (
-        <div>
-            {
-                <Grid
-                    sx={{
-                        backgroundImage: `url(${backgroundImg})`,
-                        backgroundSize: "100% 100%",
-                        minHeight: "100vh",
-                        position: "relative",
-                        overflow: "hidden",
-                    }}
-                >
-                    <Grid container sx={{ height: "100vh" }}>
-                        <Grid item xs={12} md={8} lg={9}>
-                            <Grid
-                                sx={{
-                                    position: "absolute",
-                                    width: "80vw",
-                                    height: "100vh",
-                                    color: "white",
-                                }}
-                            >
-                                {/* <Boat
-                                    data={state.columns["column-1"].taskIds.map(
-                                        (taskId) => state.tasks[taskId]
-                                    )}
-                                    deleteConfiguration={deleteConfiguration}
-                                /> */}
-                                <Scene />
-                            </Grid>
-                            <Grid item xs={12} sx={{ padding: "16px" }}>
-                                <Grid item lg={8} md={12} xs={12}>
-                                    <Box
-                                        as="p"
-                                        m="0"
-                                        style={{
-                                            fontSize: "50px",
-                                            color: "white",
-                                        }}
-                                    >
-                                        Anytec 750 SPD
-                                    </Box>
-                                    <Box
-                                        style={{ color: "white", width: "60%" }}
-                                    >
-                                        A leisure boat with professional boat
-                                        standards for those with high demands.
-                                        Designed for use in our Nordic waters in
-                                        all weather conditions. Now better than
-                                        ever before with a refined cockpit
-                                        environment, a completely new canopy
-                                        solution, and a multitude of updates
-                                        from bow to stern.
-                                    </Box>
-                                </Grid>
-                                <Grid />
-                            </Grid>
-                        </Grid>
+        <></>
+        // <div>
+        //     {
+        //         <Grid
+        //             sx={{
+        //                 backgroundImage: `url(${backgroundImg})`,
+        //                 backgroundSize: "100% 100%",
+        //                 minHeight: "100vh",
+        //                 position: "relative",
+        //                 overflow: "hidden",
+        //             }}
+        //         >
+        //             <Grid container sx={{ height: "100vh" }}>
+        //                 <Grid item xs={12} md={8} lg={9}>
+        //                     <Grid
+        //                         sx={{
+        //                             position: "absolute",
+        //                             width: "80vw",
+        //                             height: "100vh",
+        //                             color: "white",
+        //                         }}
+        //                     >
+        //                         {/* <Boat
+        //                             data={state.columns["column-1"].taskIds.map(
+        //                                 (taskId) => state.tasks[taskId]
+        //                             )}
+        //                             deleteConfiguration={deleteConfiguration}
+        //                         /> */}
+        //                         <Scene />
+        //                     </Grid>
+        //                     <Grid item xs={12} sx={{ padding: "16px" }}>
+        //                         <Grid item lg={8} md={12} xs={12}>
+        //                             <Box
+        //                                 as="p"
+        //                                 m="0"
+        //                                 style={{
+        //                                     fontSize: "50px",
+        //                                     color: "white",
+        //                                 }}
+        //                             >
+        //                                 Anytec 750 SPD
+        //                             </Box>
+        //                             <Box
+        //                                 style={{ color: "white", width: "60%" }}
+        //                             >
+        //                                 A leisure boat with professional boat
+        //                                 standards for those with high demands.
+        //                                 Designed for use in our Nordic waters in
+        //                                 all weather conditions. Now better than
+        //                                 ever before with a refined cockpit
+        //                                 environment, a completely new canopy
+        //                                 solution, and a multitude of updates
+        //                                 from bow to stern.
+        //                             </Box>
+        //                         </Grid>
+        //                         <Grid />
+        //                     </Grid>
+        //                 </Grid>
 
-                        <Grid
-                            item
-                            xs={12}
-                            md={4}
-                            lg={3}
-                            sx={{ zIndex: "100", padding: "16px" }}
-                        >
-                            <Grid container>
-                                <DragDropContext
-                                    onDragStart={handleDragStart}
-                                    onDragUpdate={handleDragUpdate}
-                                    onDragEnd={handleDragEnd}
-                                >
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        margin={"2%"}
-                                        style={{
-                                            backgroundColor: "#212121",
-                                            padding: "3%",
-                                            alignContent: "center",
-                                            borderRadius: "20px",
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            gap: "0.5rem",
-                                        }}
-                                    >
-                                        <Grid
-                                            style={{
-                                                color: "white",
-                                                textAlign: "center",
-                                                padding: "1%",
-                                            }}
-                                        >
-                                            CONFIGURATION
-                                        </Grid>
-                                        <Droppable
-                                            droppableId={`${state.columnOrder[0]}`}
-                                        >
-                                            {(provided, snapshot) => (
-                                                <div
-                                                    style={{
-                                                        width: "100%",
-                                                        height: `${
-                                                            state.columns[
-                                                                "column-1"
-                                                            ].taskIds.length *
-                                                                34 +
-                                                            (state.columns[
-                                                                "column-1"
-                                                            ].taskIds.length -
-                                                                1) *
-                                                                10 +
-                                                            (snapshot.isDraggingOver &&
-                                                            currentDragItem.columnId !==
-                                                                "column-1"
-                                                                ? 44
-                                                                : 0)
-                                                        }px`,
+        //                 <Grid
+        //                     item
+        //                     xs={12}
+        //                     md={4}
+        //                     lg={3}
+        //                     sx={{ zIndex: "100", padding: "16px" }}
+        //                 >
+        //                     <Grid container>
+        //                         <DragDropContext
+        //                             onDragStart={handleDragStart}
+        //                             onDragUpdate={handleDragUpdate}
+        //                             onDragEnd={handleDragEnd}
+        //                         >
+        //                             <Grid
+        //                                 item
+        //                                 xs={12}
+        //                                 margin={"2%"}
+        //                                 style={{
+        //                                     backgroundColor: "#212121",
+        //                                     padding: "3%",
+        //                                     alignContent: "center",
+        //                                     borderRadius: "20px",
+        //                                     display: "flex",
+        //                                     flexDirection: "column",
+        //                                     gap: "0.5rem",
+        //                                 }}
+        //                             >
+        //                                 <Grid
+        //                                     style={{
+        //                                         color: "white",
+        //                                         textAlign: "center",
+        //                                         padding: "1%",
+        //                                     }}
+        //                                 >
+        //                                     CONFIGURATION
+        //                                 </Grid>
+        //                                 <Droppable
+        //                                     droppableId={`${state.columnOrder[0]}`}
+        //                                 >
+        //                                     {(provided, snapshot) => (
+        //                                         <div
+        //                                             style={{
+        //                                                 width: "100%",
+        //                                                 height: `${
+        //                                                     state.columns[
+        //                                                         "column-1"
+        //                                                     ].taskIds.length *
+        //                                                         34 +
+        //                                                     (state.columns[
+        //                                                         "column-1"
+        //                                                     ].taskIds.length -
+        //                                                         1) *
+        //                                                         10 +
+        //                                                     (snapshot.isDraggingOver &&
+        //                                                     currentDragItem.columnId !==
+        //                                                         "column-1"
+        //                                                         ? 44
+        //                                                         : 0)
+        //                                                 }px`,
 
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        gap: "10px",
-                                                    }}
-                                                    className="column1_area"
-                                                    ref={provided.innerRef}
-                                                    {...provided.droppableProps}
-                                                >
-                                                    {state.columns[
-                                                        "column-1"
-                                                    ].taskIds
-                                                        .map(
-                                                            (taskId) =>
-                                                                state.tasks[
-                                                                    taskId
-                                                                ]
-                                                        )
-                                                        .map((task, index) => (
-                                                            <Draggable
-                                                                draggableId={
-                                                                    task.id
-                                                                }
-                                                                index={index}
-                                                                key={`${Date.now()}${index}`}
-                                                            >
-                                                                {(
-                                                                    provided,
-                                                                    snapshot
-                                                                ) => (
-                                                                    <Grid
-                                                                        id={
-                                                                            task.id
-                                                                        }
-                                                                        ref={
-                                                                            provided.innerRef
-                                                                        }
-                                                                        {...provided.draggableProps}
-                                                                    >
-                                                                        <div
-                                                                            {...provided.dragHandleProps}
-                                                                            className={`draggable-item ${
-                                                                                snapshot.isDragging
-                                                                                    ? "black"
-                                                                                    : ""
-                                                                            }`}
-                                                                        >
-                                                                            <div>
-                                                                                <Box
-                                                                                    as="span"
-                                                                                    color="white"
-                                                                                >
-                                                                                    {
-                                                                                        task.content
-                                                                                    }
-                                                                                </Box>
-                                                                                <CloseIcon
-                                                                                    style={{
-                                                                                        cursor: "pointer",
-                                                                                    }}
-                                                                                    onClick={() =>
-                                                                                        deleteConfiguration(
-                                                                                            task.id
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </div>
-                                                                        </div>
-                                                                    </Grid>
-                                                                )}
-                                                            </Draggable>
-                                                        ))}
-                                                </div>
-                                            )}
-                                        </Droppable>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        display={"flex"}
-                                        flexDirection={"column"}
-                                        gap={"0.5rem"}
-                                        padding={"2%"}
-                                        margin={"2%"}
-                                        style={{
-                                            backgroundColor: "#212121",
-                                            borderRadius: "20px",
-                                        }}
-                                    >
-                                        <p
-                                            style={{
-                                                color: "white",
-                                                textAlign: "center",
-                                            }}
-                                        >
-                                            ADDONS
-                                        </p>
-                                        <Droppable
-                                            droppableId={`${state.columnOrder[1]}`}
-                                        >
-                                            {(provided, snapshot) => (
-                                                <div
-                                                    style={{
-                                                        width: "100%",
-                                                        height: `${
-                                                            state.columns[
-                                                                "column-2"
-                                                            ].taskIds.length *
-                                                                34 +
-                                                            (state.columns[
-                                                                "column-2"
-                                                            ].taskIds.length -
-                                                                1) *
-                                                                10 +
-                                                            (snapshot.isDraggingOver &&
-                                                            currentDragItem.columnId !==
-                                                                "column-2"
-                                                                ? 44
-                                                                : 0)
-                                                        }px`,
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        gap: "10px",
-                                                    }}
-                                                    className="column2_area"
-                                                    ref={provided.innerRef}
-                                                    {...provided.droppableProps}
-                                                >
-                                                    {state.columns[
-                                                        "column-2"
-                                                    ].taskIds
-                                                        .map(
-                                                            (taskId) =>
-                                                                state.tasks[
-                                                                    taskId
-                                                                ]
-                                                        )
-                                                        .map((task, index) => (
-                                                            <Draggable
-                                                                draggableId={
-                                                                    task.id
-                                                                }
-                                                                index={index}
-                                                                key={`${Date.now()}${index}`}
-                                                            >
-                                                                {(
-                                                                    provided,
-                                                                    snapshot
-                                                                ) => (
-                                                                    <Grid
-                                                                        style={{
-                                                                            textAlign:
-                                                                                "center",
-                                                                        }}
-                                                                        ref={
-                                                                            provided.innerRef
-                                                                        }
-                                                                        {...provided.draggableProps}
-                                                                    >
-                                                                        <div
-                                                                            {...provided.dragHandleProps}
-                                                                            className={`draggable-item ${
-                                                                                snapshot.isDragging
-                                                                                    ? ""
-                                                                                    : "black"
-                                                                            }`}
-                                                                        >
-                                                                            <div>
-                                                                                <Box
-                                                                                    as="span"
-                                                                                    color="white"
-                                                                                >
-                                                                                    {
-                                                                                        task.content
-                                                                                    }
-                                                                                </Box>
-                                                                                <CloseIcon />
-                                                                            </div>
-                                                                        </div>
-                                                                    </Grid>
-                                                                )}
-                                                            </Draggable>
-                                                        ))}
-                                                </div>
-                                            )}
-                                        </Droppable>
-                                    </Grid>
-                                </DragDropContext>
-                                <Grid
-                                    item
-                                    xs={12}
-                                    margin={"2%"}
-                                    sx={{
-                                        backgroundColor: "#212121",
-                                        padding: "3%",
-                                        alignContent: "center",
-                                        borderRadius: "20px",
-                                    }}
-                                >
-                                    <p
-                                        style={{
-                                            textAlign: "center",
-                                            color: "white",
-                                        }}
-                                    >
-                                        Total: 143 000$
-                                    </p>
-                                    <Grid
-                                        container
-                                        columnSpacing={1}
-                                        style={{
-                                            justifyContent: "space-between",
-                                        }}
-                                    >
-                                        <Grid>
-                                            <Button
-                                                style={{
-                                                    color: "white",
-                                                    marginLeft: "15px",
-                                                    borderRadius: "25px",
-                                                    backgroundColor: "#ff9900",
-                                                    ":hover": {
-                                                        boxShadow: 4,
-                                                        backgroundColor:
-                                                            "#ffa31a",
-                                                    },
-                                                }}
-                                            >
-                                                <>SIMULATE</>
-                                            </Button>
-                                        </Grid>
-                                        <Grid>
-                                            <Button
-                                                style={{
-                                                    marginRight: "15px",
-                                                    color: "white",
-                                                    borderRadius: "25px",
-                                                    backgroundColor: "#ff9900",
-                                                    ":hover": {
-                                                        boxShadow: 4,
-                                                        backgroundColor:
-                                                            "#ffa31a",
-                                                    },
-                                                }}
-                                            >
-                                                DEALERS
-                                            </Button>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            }
-        </div>
+        //                                                 display: "flex",
+        //                                                 flexDirection: "column",
+        //                                                 gap: "10px",
+        //                                             }}
+        //                                             className="column1_area"
+        //                                             ref={provided.innerRef}
+        //                                             {...provided.droppableProps}
+        //                                         >
+        //                                             {state.columns[
+        //                                                 "column-1"
+        //                                             ].taskIds
+        //                                                 .map(
+        //                                                     (taskId) =>
+        //                                                         state.tasks[
+        //                                                             taskId
+        //                                                         ]
+        //                                                 )
+        //                                                 .map((task, index) => (
+        //                                                     <Draggable
+        //                                                         draggableId={
+        //                                                             task.id
+        //                                                         }
+        //                                                         index={index}
+        //                                                         key={`${Date.now()}${index}`}
+        //                                                     >
+        //                                                         {(
+        //                                                             provided,
+        //                                                             snapshot
+        //                                                         ) => (
+        //                                                             <Grid
+        //                                                                 id={
+        //                                                                     task.id
+        //                                                                 }
+        //                                                                 ref={
+        //                                                                     provided.innerRef
+        //                                                                 }
+        //                                                                 {...provided.draggableProps}
+        //                                                             >
+        //                                                                 <div
+        //                                                                     {...provided.dragHandleProps}
+        //                                                                     className={`draggable-item ${
+        //                                                                         snapshot.isDragging
+        //                                                                             ? "black"
+        //                                                                             : ""
+        //                                                                     }`}
+        //                                                                 >
+        //                                                                     <div>
+        //                                                                         <Box
+        //                                                                             as="span"
+        //                                                                             color="white"
+        //                                                                         >
+        //                                                                             {
+        //                                                                                 task.content
+        //                                                                             }
+        //                                                                         </Box>
+        //                                                                         <CloseIcon
+        //                                                                             style={{
+        //                                                                                 cursor: "pointer",
+        //                                                                             }}
+        //                                                                             onClick={() =>
+        //                                                                                 deleteConfiguration(
+        //                                                                                     task.id
+        //                                                                                 )
+        //                                                                             }
+        //                                                                         />
+        //                                                                     </div>
+        //                                                                 </div>
+        //                                                             </Grid>
+        //                                                         )}
+        //                                                     </Draggable>
+        //                                                 ))}
+        //                                         </div>
+        //                                     )}
+        //                                 </Droppable>
+        //                             </Grid>
+        //                             <Grid
+        //                                 item
+        //                                 xs={12}
+        //                                 display={"flex"}
+        //                                 flexDirection={"column"}
+        //                                 gap={"0.5rem"}
+        //                                 padding={"2%"}
+        //                                 margin={"2%"}
+        //                                 style={{
+        //                                     backgroundColor: "#212121",
+        //                                     borderRadius: "20px",
+        //                                 }}
+        //                             >
+        //                                 <p
+        //                                     style={{
+        //                                         color: "white",
+        //                                         textAlign: "center",
+        //                                     }}
+        //                                 >
+        //                                     ADDONS
+        //                                 </p>
+        //                                 <Droppable
+        //                                     droppableId={`${state.columnOrder[1]}`}
+        //                                 >
+        //                                     {(provided, snapshot) => (
+        //                                         <div
+        //                                             style={{
+        //                                                 width: "100%",
+        //                                                 height: `${
+        //                                                     state.columns[
+        //                                                         "column-2"
+        //                                                     ].taskIds.length *
+        //                                                         34 +
+        //                                                     (state.columns[
+        //                                                         "column-2"
+        //                                                     ].taskIds.length -
+        //                                                         1) *
+        //                                                         10 +
+        //                                                     (snapshot.isDraggingOver &&
+        //                                                     currentDragItem.columnId !==
+        //                                                         "column-2"
+        //                                                         ? 44
+        //                                                         : 0)
+        //                                                 }px`,
+        //                                                 display: "flex",
+        //                                                 flexDirection: "column",
+        //                                                 gap: "10px",
+        //                                             }}
+        //                                             className="column2_area"
+        //                                             ref={provided.innerRef}
+        //                                             {...provided.droppableProps}
+        //                                         >
+        //                                             {state.columns[
+        //                                                 "column-2"
+        //                                             ].taskIds
+        //                                                 .map(
+        //                                                     (taskId) =>
+        //                                                         state.tasks[
+        //                                                             taskId
+        //                                                         ]
+        //                                                 )
+        //                                                 .map((task, index) => (
+        //                                                     <Draggable
+        //                                                         draggableId={
+        //                                                             task.id
+        //                                                         }
+        //                                                         index={index}
+        //                                                         key={`${Date.now()}${index}`}
+        //                                                     >
+        //                                                         {(
+        //                                                             provided,
+        //                                                             snapshot
+        //                                                         ) => (
+        //                                                             <Grid
+        //                                                                 style={{
+        //                                                                     textAlign:
+        //                                                                         "center",
+        //                                                                 }}
+        //                                                                 ref={
+        //                                                                     provided.innerRef
+        //                                                                 }
+        //                                                                 {...provided.draggableProps}
+        //                                                             >
+        //                                                                 <div
+        //                                                                     {...provided.dragHandleProps}
+        //                                                                     className={`draggable-item ${
+        //                                                                         snapshot.isDragging
+        //                                                                             ? ""
+        //                                                                             : "black"
+        //                                                                     }`}
+        //                                                                 >
+        //                                                                     <div>
+        //                                                                         <Box
+        //                                                                             as="span"
+        //                                                                             color="white"
+        //                                                                         >
+        //                                                                             {
+        //                                                                                 task.content
+        //                                                                             }
+        //                                                                         </Box>
+        //                                                                         <CloseIcon />
+        //                                                                     </div>
+        //                                                                 </div>
+        //                                                             </Grid>
+        //                                                         )}
+        //                                                     </Draggable>
+        //                                                 ))}
+        //                                         </div>
+        //                                     )}
+        //                                 </Droppable>
+        //                             </Grid>
+        //                         </DragDropContext>
+        //                         <Grid
+        //                             item
+        //                             xs={12}
+        //                             margin={"2%"}
+        //                             sx={{
+        //                                 backgroundColor: "#212121",
+        //                                 padding: "3%",
+        //                                 alignContent: "center",
+        //                                 borderRadius: "20px",
+        //                             }}
+        //                         >
+        //                             <p
+        //                                 style={{
+        //                                     textAlign: "center",
+        //                                     color: "white",
+        //                                 }}
+        //                             >
+        //                                 Total: 143 000$
+        //                             </p>
+        //                             <Grid
+        //                                 container
+        //                                 columnSpacing={1}
+        //                                 style={{
+        //                                     justifyContent: "space-between",
+        //                                 }}
+        //                             >
+        //                                 <Grid>
+        //                                     <Button
+        //                                         style={{
+        //                                             color: "white",
+        //                                             marginLeft: "15px",
+        //                                             borderRadius: "25px",
+        //                                             backgroundColor: "#ff9900",
+        //                                             ":hover": {
+        //                                                 boxShadow: 4,
+        //                                                 backgroundColor:
+        //                                                     "#ffa31a",
+        //                                             },
+        //                                         }}
+        //                                     >
+        //                                         <>SIMULATE</>
+        //                                     </Button>
+        //                                 </Grid>
+        //                                 <Grid>
+        //                                     <Button
+        //                                         style={{
+        //                                             marginRight: "15px",
+        //                                             color: "white",
+        //                                             borderRadius: "25px",
+        //                                             backgroundColor: "#ff9900",
+        //                                             ":hover": {
+        //                                                 boxShadow: 4,
+        //                                                 backgroundColor:
+        //                                                     "#ffa31a",
+        //                                             },
+        //                                         }}
+        //                                     >
+        //                                         DEALERS
+        //                                     </Button>
+        //                                 </Grid>
+        //                             </Grid>
+        //                         </Grid>
+        //                     </Grid>
+        //                 </Grid>
+        //             </Grid>
+        //         </Grid>
+        //     }
+        // </div>
     );
 }
