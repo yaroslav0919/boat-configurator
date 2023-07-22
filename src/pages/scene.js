@@ -1,30 +1,19 @@
 import MSelect from "./MSelect";
 import { useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import {
-    Stats,
-    useProgress,
-    Billboard,
-    Html,
-    OrbitControls,
-    Loader,
-    Environment,
-    softShadows,
-    Sky,
-    MapControls,
-    TransformControls,
-    useGLTF,
-} from "@react-three/drei";
+import { OrbitControls, useGLTF } from "@react-three/drei";
 
-import * as THREE from "three";
-import { useLoader } from "@react-three/fiber";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
-
-const Scene = () => {
+const Scene = ({ state }) => {
     const canvasRef = useRef(null);
-    // const gltf = useLoader(GLTFLoader, "/boat.gltf");
     const { nodes, materials } = useGLTF("/boat.gltf");
+
+    useEffect(() => {
+        console.log("kkk", state.columns["column-1"].taskIds);
+    }, [state]);
+    const nodeNames = [];
+    state.columns["column-1"].taskIds.forEach((id) => {
+        nodeNames.push(state.tasks[id].nodeName);
+    });
     console.log(nodes);
     return (
         <Canvas
@@ -38,25 +27,14 @@ const Scene = () => {
                 aspect: window.innerWidth / window.innerHeight,
             }}
             shadows
-
-            // gl={{
-            //     antialias: true,
-            //     toneMapping: THREE.ACESFilmicToneMapping,
-            // }}
-
-            // onCreated={({ gl, scene }) => {
-            //     gl.toneMapping = THREE.ACESFilmicToneMapping;
-            //     gl.toneMappingExposure = 1;
-            //     gl.shadowMap.type = THREE.VSMShadowMap;
-            //     // const helper = new THREE.CameraHelper(lightRef.current.shadow.camera);
-            //     // scene.add(helper);
-            // }}
         >
             <gridHelper />
             <OrbitControls />
             <hemisphereLight intensity={0.5} />
             <directionalLight intensity={0.8} position={[5, 10, 5]} />
             <directionalLight intensity={0.8} position={[5, -10, 5]} />
+            <directionalLight intensity={0.8} position={[0, -10, -5]} />
+
             <spotLight
                 intensity={2}
                 color={0xffeedf}
@@ -71,12 +49,9 @@ const Scene = () => {
 
             <group>
                 <primitive object={nodes.anytec_base_mesh} />
-                {/* <primitive object={nodes.anytec_bowthruster} />
-                <primitive object={nodes.anytec_coushins} />
-                <primitive object={nodes.anytec_windlass} />
-                <primitive object={nodes.anytec_zipwake} /> */}
-                {/* <primitive object={nodes.anytec_mercury_engine} /> */}
-                <primitive object={nodes.anytec_yamaha_engine} />
+                {nodeNames.map((name, index) => (
+                    <primitive key={`modelPart${index}`} object={nodes[name]} />
+                ))}
             </group>
 
             {/* <Marker
