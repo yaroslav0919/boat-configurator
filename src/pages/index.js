@@ -104,18 +104,36 @@ export default function View() {
             }
 
             const startTaskIds = Array.from(start.taskIds);
+            const finishTaskIds = Array.from(finish.taskIds);
+
+            const partType = startTaskIds[result.source.index].split("-")[0];
+            let sameTypeId = null;
+
+            if (start.id === "column-2") {
+                sameTypeId = finishTaskIds.find(
+                    (id) => id.split("-")[0] === partType
+                );
+            }
+
             startTaskIds.splice(result.source.index, 1);
+            sameTypeId && startTaskIds.push(sameTypeId);
             const newStart = {
                 ...start,
                 taskIds: startTaskIds,
             };
 
-            const finishTaskIds = Array.from(finish.taskIds);
             finishTaskIds.splice(
                 result.destination.index,
                 0,
                 result.draggableId
             );
+            if (sameTypeId) {
+                const indexSame = finishTaskIds.findIndex(
+                    (id) => id === sameTypeId
+                );
+                finishTaskIds.splice(indexSame, 1);
+            }
+
             const newFinish = {
                 ...finish,
                 taskIds: finishTaskIds,
