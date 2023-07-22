@@ -7,14 +7,10 @@ const Scene = ({ state }) => {
     const canvasRef = useRef(null);
     const { nodes, materials } = useGLTF("/boat.gltf");
 
-    useEffect(() => {
-        console.log("kkk", state.columns["column-1"].taskIds);
-    }, [state]);
     const nodeNames = [];
     state.columns["column-1"].taskIds.forEach((id) => {
         nodeNames.push(state.tasks[id].nodeName);
     });
-    console.log(nodes);
     return (
         <Canvas
             className="render-canvas"
@@ -27,6 +23,7 @@ const Scene = ({ state }) => {
                 aspect: window.innerWidth / window.innerHeight,
             }}
             shadows
+            style={{ cursor: "grab" }}
         >
             <gridHelper />
             <OrbitControls />
