@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { Html } from "@react-three/drei";
 import { initState } from "../constants";
-const Scene = ({ state }) => {
+const Scene = ({ state, deleteInventory, exchange }) => {
     const canvasRef = useRef(null);
     const { nodes, materials } = useGLTF("/boat.gltf");
 
@@ -19,6 +19,7 @@ const Scene = ({ state }) => {
         return listArray;
     };
 
+    console.log(initState.coordinate["coushin"]);
     return (
         <Canvas
             className="render-canvas"
@@ -50,19 +51,39 @@ const Scene = ({ state }) => {
                 <primitive object={nodes.anytec_base_mesh} />
                 {state.columns["column-1"].taskIds.map((id, index) => (
                     <primitive
-                        key={`modelPart${index}`}
+                        key={`modelPart${id}`}
                         object={nodes[initState.tasks[id].nodeName]}
-                    >
-                        <Html>
+                    ></primitive>
+                ))}
+
+                {state.columns["column-1"].taskIds.map((id, index) => {
+                    console.log(id);
+                    console.log(nodes[initState.tasks[id].nodeName].position);
+                    console.log(
+                        initState.coordinate[id.split("-")[0]].x,
+                        initState.coordinate[id.split("-")[0]].y,
+                        initState.coordinate[id.split("-")[0]].z
+                    );
+
+                    return (
+                        <Html
+                            position={
+                                (initState.coordinate[id.split("-")[0]].x,
+                                initState.coordinate[id.split("-")[0]].y,
+                                initState.coordinate[id.split("-")[0]].z)
+                            }
+                            key={`Hotspot${index}`}
+                        >
                             <MSelect
                                 className="Hotspot"
                                 data-visibility-attribute="visible"
                                 list={getList(id)}
-                                // deleteConfiguration={deleteConfiguration}
+                                deleteInventory={deleteInventory}
+                                exchange={exchange}
                             />
                         </Html>
-                    </primitive>
-                ))}
+                    );
+                })}
             </group>
         </Canvas>
     );

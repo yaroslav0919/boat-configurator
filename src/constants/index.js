@@ -36,6 +36,13 @@ export const modelParts = {
 };
 
 export const initState = {
+    coordinate: {
+        coushin: { x: 0, y: -0.7839846611022949, z: 2.4708449840545654 },
+        engine: { x: 0, y: -1.3156129121780396, z: 3.44488525390625 },
+
+        windlass: { x: 0, y: -0.290231, z: 0 },
+        zipwake: { x: 0, y: -3.47733, z: -1.40385 },
+    },
     tasks: {
         "coushin-1": {
             id: "coushin-1",

@@ -6,7 +6,7 @@ import { initState } from "../constants";
 
 const MSelect = (props) => {
     const [visible, setVisible] = useState(false);
-    const { dir = "row-reverse", list, deleteConfiguration } = props;
+    const { dir = "row-reverse", list, deleteInventory, exchange } = props;
 
     const toggleSlide = () => {
         setVisible(!visible);
@@ -75,17 +75,21 @@ const MSelect = (props) => {
                         list.map((item, index) => (
                             <Button
                                 endIcon={
-                                    <CloseIcon
-                                        onClick={(e) => {
-                                            // deleteConfiguration(item.id)}
-                                        }}
-                                    />
+                                    !index && (
+                                        <CloseIcon
+                                            onClick={(e) => {
+                                                deleteInventory(item);
+                                            }}
+                                        />
+                                    )
                                 }
                                 sx={{
                                     width: "100%",
                                     justifyContent: "space-between",
                                     borderRadius: "25px",
-                                    backgroundColor: "#ff9900",
+                                    backgroundColor: !index
+                                        ? "#ff9900"
+                                        : "black",
                                     fontSize: "14px",
                                     padding: "0 10px",
                                     ":hover": {
@@ -98,13 +102,15 @@ const MSelect = (props) => {
                                 <Box
                                     as="span"
                                     width="100%"
-                                    onClick={() => {}}
+                                    onClick={() => {
+                                        index && exchange(item);
+                                    }}
                                     className="select_model"
                                     datatexture={item.texture}
                                     dataindex="normalTexture"
                                     color="white"
                                 >
-                                    {item.content}
+                                    {initState.tasks[item].content}
                                 </Box>
                             </Button>
                         ))}

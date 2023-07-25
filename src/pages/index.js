@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // import Boat from "./boat";
 import { Grid, Button, Box } from "@mui/material";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
@@ -105,51 +105,76 @@ export default function View() {
 
             const startTaskIds = Array.from(start.taskIds);
             const finishTaskIds = Array.from(finish.taskIds);
-
-            const partType = startTaskIds[result.source.index].split("-")[0];
-            let sameTypeId = null;
+            const startId = startTaskIds[result.source.index];
 
             if (start.id === "column-2") {
-                sameTypeId = finishTaskIds.find(
-                    (id) => id.split("-")[0] === partType
+                exchange(startId, result.destination.index);
+            } else {
+                startTaskIds.splice(result.source.index, 1);
+                const newStart = {
+                    ...start,
+                    taskIds: startTaskIds,
+                };
+                finishTaskIds.splice(
+                    result.destination.index,
+                    0,
+                    result.draggableId
                 );
+                const newFinish = {
+                    ...finish,
+                    taskIds: finishTaskIds,
+                };
+                setState({
+                    ...state,
+                    columns: {
+                        ...state.columns,
+                        [newStart.id]: newStart,
+                        [newFinish.id]: newFinish,
+                    },
+                });
             }
-
-            startTaskIds.splice(result.source.index, 1);
-            sameTypeId && startTaskIds.push(sameTypeId);
-            const newStart = {
-                ...start,
-                taskIds: startTaskIds,
-            };
-
-            finishTaskIds.splice(
-                result.destination.index,
-                0,
-                result.draggableId
-            );
-            if (sameTypeId) {
-                const indexSame = finishTaskIds.findIndex(
-                    (id) => id === sameTypeId
-                );
-                finishTaskIds.splice(indexSame, 1);
-            }
-
-            const newFinish = {
-                ...finish,
-                taskIds: finishTaskIds,
-            };
-
-            setState({
-                ...state,
-                columns: {
-                    ...state.columns,
-                    [newStart.id]: newStart,
-                    [newFinish.id]: newFinish,
-                },
-            });
         },
         [state]
     );
+
+    const exchange = (cid, dindex) => {
+        const cindex = state.columns["column-2"].taskIds.findIndex(
+            (id) => id === cid
+        );
+        const newColum2 = Array.from(state.columns["column-2"].taskIds);
+        const newColum1 = Array.from(state.columns["column-1"].taskIds);
+
+        newColum2.splice(cindex, 1);
+        if (dindex) {
+            newColum1.splice(dindex, 0, cid);
+        } else {
+            newColum1.push(cid);
+        }
+
+        const sameTypeId = newColum1.find(
+            (id) => id.split("-")[0] === cid.split("-")[0] && cid !== id
+        );
+        if (sameTypeId) {
+            const index = newColum1.findIndex((id) => id === sameTypeId);
+            newColum1.splice(index, 1);
+            newColum2.push(sameTypeId);
+        }
+
+        setState({
+            ...state,
+            columns: {
+                ...state.columns,
+                "column-1": {
+                    id: "column-1",
+                    taskIds: newColum1,
+                },
+                "column-2": {
+                    id: "column-2",
+                    taskIds: newColum2,
+                },
+            },
+        });
+    };
 
     return (
         <div>
@@ -179,7 +204,11 @@ export default function View() {
                                     )}
                                     deleteConfiguration={deleteConfiguration}
                                 /> */}
-                                <Scene state={state} />
+                                <Scene
+                                    state={state}
+                                    deleteInventory={deleteConfiguration}
+                                    exchange={exchange}
+                                />
                             </Grid>
                             <Grid item xs={12} sx={{ padding: "16px" }}>
                                 <Grid item lg={8} md={12} xs={12}>
