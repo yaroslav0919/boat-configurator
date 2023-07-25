@@ -215,7 +215,12 @@ export default function View() {
                             xs={12}
                             md={4}
                             lg={3}
-                            sx={{ zIndex: "100", padding: "16px" }}
+                            sx={{
+                                zIndex: "100",
+                                padding: "16px",
+                                height: "fit-content",
+                                zIndex: 200000000,
+                            }}
                         >
                             <Grid container>
                                 <DragDropContext

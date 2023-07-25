@@ -2,18 +2,11 @@ import { useState } from "react";
 import { IconButton, Box, Grid, Button } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
+import { initState } from "../constants";
 
 const MSelect = (props) => {
     const [visible, setVisible] = useState(false);
-    const { dir = "row", list, dataid, deleteConfiguration } = props;
-
-    const [text, setText] = useState(
-        list.length > 0 ? list[0].content : "Disabled"
-    );
-
-    const setTexture = (value) => {
-        setText(value);
-    };
+    const { dir = "row-reverse", list, deleteConfiguration } = props;
 
     const toggleSlide = () => {
         setVisible(!visible);
@@ -41,7 +34,7 @@ const MSelect = (props) => {
                     borderRadius="5px"
                     minWidth="215px"
                 >
-                    {text}
+                    {initState.tasks[list[0]].content}
                 </Box>
                 <IconButton
                     style={{
@@ -83,9 +76,9 @@ const MSelect = (props) => {
                             <Button
                                 endIcon={
                                     <CloseIcon
-                                        onClick={(e) =>
-                                            deleteConfiguration(item.id)
-                                        }
+                                        onClick={(e) => {
+                                            // deleteConfiguration(item.id)}
+                                        }}
                                     />
                                 }
                                 sx={{
@@ -105,13 +98,10 @@ const MSelect = (props) => {
                                 <Box
                                     as="span"
                                     width="100%"
-                                    onClick={() =>
-                                        setTexture(`${item.content}`)
-                                    }
+                                    onClick={() => {}}
                                     className="select_model"
                                     datatexture={item.texture}
                                     dataindex="normalTexture"
-                                    dataid={dataid}
                                     color="white"
                                 >
                                     {item.content}
