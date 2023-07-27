@@ -198,12 +198,6 @@ export default function View() {
                                     color: "white",
                                 }}
                             >
-                                {/* <Boat
-                                    data={state.columns["column-1"].taskIds.map(
-                                        (taskId) => state.tasks[taskId]
-                                    )}
-                                    deleteConfiguration={deleteConfiguration}
-                                /> */}
                                 <Scene
                                     state={state}
                                     deleteInventory={deleteConfiguration}

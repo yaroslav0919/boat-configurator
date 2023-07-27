@@ -8,8 +8,6 @@ const Boat = ({ data, deleteConfiguration }) => {
         modelViewerTexture1.addEventListener("load", () => {
             const material = modelViewerTexture1.model.materials;
 
-            console.log(modelViewerTexture1.model[0]);
-
             const createAndApplyTexture = async (id, channel, event) => {
                 const texture = await modelViewerTexture1.createTexture(event);
                 const index = parseInt(id) - 1;

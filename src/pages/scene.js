@@ -1,6 +1,7 @@
 import MSelect from "./MSelect";
-import { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useRef } from "react";
+import * as THREE from "three";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { Html } from "@react-three/drei";
 import { initState } from "../constants";
@@ -19,10 +20,9 @@ const Scene = ({ state, deleteInventory, exchange }) => {
         return listArray;
     };
 
-    console.log(initState.coordinate["coushin"]);
     return (
         <Canvas
-            className="render-canvas"
+            className="render-canvas relative"
             ref={canvasRef}
             camera={{
                 fov: 60,
@@ -32,9 +32,8 @@ const Scene = ({ state, deleteInventory, exchange }) => {
                 aspect: window.innerWidth / window.innerHeight,
             }}
             shadows
-            style={{ cursor: "grab" }}
+            style={{ cursor: "grab", zIndex: 16730000, position: "relative" }}
         >
-            <gridHelper />
             <OrbitControls />
             <hemisphereLight intensity={0.5} />
             <directionalLight intensity={0.8} position={[5, 10, 5]} />
@@ -57,20 +56,14 @@ const Scene = ({ state, deleteInventory, exchange }) => {
                 ))}
 
                 {state.columns["column-1"].taskIds.map((id, index) => {
-                    console.log(id);
-                    console.log(nodes[initState.tasks[id].nodeName].position);
-                    console.log(
-                        initState.coordinate[id.split("-")[0]].x,
-                        initState.coordinate[id.split("-")[0]].y,
-                        initState.coordinate[id.split("-")[0]].z
-                    );
-
                     return (
                         <Html
                             position={
-                                (initState.coordinate[id.split("-")[0]].x,
-                                initState.coordinate[id.split("-")[0]].y,
-                                initState.coordinate[id.split("-")[0]].z)
+                                new THREE.Vector3(
+                                    initState.coordinate[id.split("-")[0]].x,
+                                    initState.coordinate[id.split("-")[0]].y,
+                                    initState.coordinate[id.split("-")[0]].z
+                                )
                             }
                             key={`Hotspot${index}`}
                         >
